@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
@@ -59,7 +61,7 @@ public class test1 extends JFrame {
      });
  }
 
- private void connectToServer() {
+ public void connectToServer() {
      String serverIp = serverIpField.getText();
      int serverPort = Integer.parseInt(serverPortField.getText());
 
@@ -80,25 +82,48 @@ public class test1 extends JFrame {
  }
 
  private class ProcessInfoSender implements Runnable {
+	 
      @Override
      public void run() {
          while (!Thread.interrupted()) {
              try {
                  String activeProcess = getActiveProcess();
-                 out.println(activeProcess); // Send process information to the server
+                 out.println(activeProcess);
                  Thread.sleep(5000);
              } catch (InterruptedException e) {
                  e.printStackTrace();
              }
          }
      }
+     
+     private String lastProcessName = "";
 
      private String getActiveProcess() {
          User32 user32 = User32.INSTANCE;
          char[] windowText = new char[512];
          WinDef.HWND hwnd = user32.GetForegroundWindow();
          user32.GetWindowText(hwnd, windowText, 512);
-         return Native.toString(windowText);
+
+         String processName = Native.toString(windowText);
+         String timestamp = getTimestamp();
+
+         if (!processName.equals(lastProcessName)) {
+            
+             String endStatus = timestamp + ": " + "End - " + lastProcessName;
+             lastProcessName = processName;
+
+             String beginStatus = timestamp + ": " + "Begin - " + processName;
+             return endStatus + "\n" + beginStatus;
+         }
+
+         return timestamp + ": " + "Running - " + processName;
+     }
+
+     
+     private String getTimestamp() {
+         java.util.Date date = new java.util.Date();
+         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+         return sdf.format(date);
      }
  }
 

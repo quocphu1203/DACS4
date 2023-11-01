@@ -1,0 +1,14 @@
+2023-10-28 23:39:46: Server Monitor
+2023-10-28 23:39:51: Server Monitor
+2023-10-31 00:28:59: eclipse-workspace - remote_desktop/info.txt - Eclipse IDE
+2023-10-31 00:29:04: eclipse-workspace - remote_desktop/info.txt - Eclipse IDE
+2023-10-31 00:29:09: eclipse-workspace - remote_desktop/src/main/java/com/google/remote_desktop/ClientAppBackground.java - Eclipse IDE
+2023-10-31 00:29:14: 
+2023-10-31 00:29:20: Server Monitor
+2023-10-31 00:29:25: Server Monitor
+2023-11-01 07:53:20: Running - Program Manager
+2023-11-01 07:53:25: Running - Program Manager
+2023-11-01 07:53:30: End - Program Manager
+2023-11-01 07:53:30: Begin - test – test1.java
+2023-11-01 07:53:35: Running - test – test1.java
+2023-11-01 07:53:40: Running - test – test1.java

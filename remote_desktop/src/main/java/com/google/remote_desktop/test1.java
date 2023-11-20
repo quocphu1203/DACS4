@@ -22,6 +22,7 @@ public class test1 extends JFrame {
  private Socket socket;
  private PrintWriter out;
  private BufferedReader in;
+ 
 
  public test1() {
      // Set up the JFrame
@@ -60,6 +61,8 @@ public class test1 extends JFrame {
          }
      });
  }
+ 
+ 
 
  public void connectToServer() {
      String serverIp = serverIpField.getText();
@@ -80,21 +83,26 @@ public class test1 extends JFrame {
          e.printStackTrace();
      }
  }
+ 
+ 
 
  private class ProcessInfoSender implements Runnable {
 	 
      @Override
      public void run() {
          while (!Thread.interrupted()) {
-             try {
-                 String activeProcess = getActiveProcess();
-                 out.println(activeProcess);
-                 Thread.sleep(5000);
-             } catch (InterruptedException e) {
-                 e.printStackTrace();
-             }
+
+        		 try {
+                     String activeProcess = getActiveProcess();
+                     out.println(activeProcess);
+                     Thread.sleep(5000);
+                 } catch (InterruptedException e) {
+                     e.printStackTrace();
+                 }
+			
          }
      }
+	 
      
      private String lastProcessName = "";
 
@@ -133,6 +141,9 @@ public class test1 extends JFrame {
          clientApp.setVisible(true);
      });
  }
+ 
 }
+
+
 
 

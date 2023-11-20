@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class test2 extends JFrame {
     private JLabel statusLabel;
@@ -17,6 +19,7 @@ public class test2 extends JFrame {
     private ServerSocket serverSocket;
     private JTextArea processInfoArea;
     private static boolean isLoggingEnabled = false;
+    
     private FileWriter fileWriter;
 
     public test2() {
@@ -89,7 +92,7 @@ public class test2 extends JFrame {
                     startServerButton.setEnabled(false);
                     stopServerButton.setEnabled(true);
 
-                    // Create a thread for accepting client connections
+                   
                     Thread acceptClientsThread = new Thread(new AcceptClientsThread());
                     acceptClientsThread.start();
                 } catch (IOException ex) {
@@ -105,9 +108,11 @@ public class test2 extends JFrame {
                     if (serverSocket != null) {
                         serverSocket.close();
                     }
+                    
                     if (fileWriter != null) {
                         fileWriter.close();
                     }
+
                     statusLabel.setText("Server Status: Offline");
                     startServerButton.setEnabled(true);
                     stopServerButton.setEnabled(false);
@@ -118,6 +123,8 @@ public class test2 extends JFrame {
             }
         });
     }
+   //
+    private List<PrintWriter> clientOutputStreams = new ArrayList<>();
 
     private class AcceptClientsThread implements Runnable {
         @Override
@@ -128,7 +135,7 @@ public class test2 extends JFrame {
                     String clientInfo = "Client connected: " + clientSocket.getInetAddress() + ":" + clientSocket.getPort();
                     updateConnectedClients(clientInfo);
 
-                    // Create a thread to handle client communication
+                    
                     Thread clientThread = new Thread(new ClientCommunicationThread(clientSocket));
                     clientThread.start();
 
@@ -141,9 +148,18 @@ public class test2 extends JFrame {
 
     private class ClientCommunicationThread implements Runnable {
         private Socket clientSocket;
+        private PrintWriter clientOut;
 
         public ClientCommunicationThread(Socket clientSocket) {
             this.clientSocket = clientSocket;
+            
+            //
+            try {
+                this.clientOut = new PrintWriter(clientSocket.getOutputStream(), true);
+                clientOutputStreams.add(clientOut);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -153,12 +169,44 @@ public class test2 extends JFrame {
                 String message;
                 while ((message = in.readLine()) != null) {
                     updateProcessInfo(message);
+                    //
+                    sendToAllClients(message);
                 }
                 clientSocket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        //
+        private void sendToAllClients(String message) {
+            for (PrintWriter clientOut : clientOutputStreams) {
+                clientOut.println(message);
+            }
+        }
+        
+
+		private void sendToTrackingClient(String message) {
+			try {
+	
+		        String trackingClientIp = "127.0.0.1"; 
+		        int trackingClientPort = 8080;
+
+		        Socket trackingClientSocket = new Socket(trackingClientIp, trackingClientPort);
+		        
+		        
+		        PrintWriter trackingClientOut = new PrintWriter(trackingClientSocket.getOutputStream(), true);
+		        
+		       
+		        trackingClientOut.println(message);
+		        
+		        
+		        trackingClientOut.close();
+		        trackingClientSocket.close();
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		    }
+			
+		}
     }
 
     private void updateProcessInfo(String info) {
@@ -173,10 +221,11 @@ public class test2 extends JFrame {
     private void logProcessInfo(String info) {
         try {
             if (fileWriter == null) {
-                fileWriter = new FileWriter("C:\\Users\\ASUS\\git\\repository\\remote_desktop\\info.txt", true);
+                fileWriter = new FileWriter("info.txt", true);
             }
             fileWriter.write(info + "\n");
             fileWriter.flush();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -192,6 +241,9 @@ public class test2 extends JFrame {
         SwingUtilities.invokeLater(() -> {
             test2 serverMonitor = new test2();
             serverMonitor.setVisible(true);
+            
         });
     }
+    
+
 }

@@ -12,3 +12,6 @@
 2023-11-01 07:53:30: Begin - test – test1.java
 2023-11-01 07:53:35: Running - test – test1.java
 2023-11-01 07:53:40: Running - test – test1.java
+2023-11-14 21:55:08: End - eclipse-workspace - remote_desktop/src/main/java/com/google/remote_desktop/Test3.java - Eclipse IDE
+2023-11-14 21:55:08: Begin - Server Monitor
+2023-11-14 21:55:13: Running - Server Monitor

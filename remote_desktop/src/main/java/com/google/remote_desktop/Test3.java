@@ -7,6 +7,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 public class Test3 extends JFrame {
     private JTextArea processInfoArea;
     private JTextField serverIpField;
@@ -50,29 +55,34 @@ public class Test3 extends JFrame {
         sidePanel.add(btnControl);
 
         connectButton.addActionListener(e -> {
-            // Khi nút "Connect to Server" được nhấn
-            connectToServer();
+
+        	String serverIp = serverIpField.getText();
+            int serverPort = Integer.parseInt(serverPortField.getText());
+
+
+            Thread connectionThread = new Thread(() -> connectToServer(serverIp, serverPort));
+            connectionThread.start();
         });
     }
 
-    private void connectToServer() {
-        String serverIp = serverIpField.getText();
-        int serverPort = Integer.parseInt(serverPortField.getText());
+    private void connectToServer(String serverIp, int serverPort) {
+    	  try {
+              Socket socket = new Socket(serverIp, serverPort);
+              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-        try {
-            Socket socket = new Socket(serverIp, serverPort);
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+              String message;
+              while ((message = in.readLine()) != null) {
+                  processInfoArea.append(message + "\n");
 
-            String message;
-            while ((message = in.readLine()) != null) {
-                processInfoArea.append(message + "\n");
-            }
+              }
 
-            socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+              socket.close();
+          } catch (IOException e) {
+              e.printStackTrace();
+          }
     }
+    
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

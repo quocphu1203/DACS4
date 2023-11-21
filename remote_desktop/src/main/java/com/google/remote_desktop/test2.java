@@ -10,6 +10,13 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+
 public class test2 extends JFrame {
     private JLabel statusLabel;
     private JTextField portField;
@@ -235,6 +242,37 @@ public class test2 extends JFrame {
         SwingUtilities.invokeLater(() -> {
             connectedClientsArea.append(clientInfo + "\n");
         });
+    }
+    
+    private void receiveImageAndForwardToTest3() {
+        try {
+            ServerSocket serverSocket = new ServerSocket(8888); 
+
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                InputStream inputStream = clientSocket.getInputStream();
+                BufferedImage receivedImage = ImageIO.read(inputStream);
+
+          
+                sendImageToTest3(receivedImage);
+
+                clientSocket.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void sendImageToTest3(BufferedImage image) {
+        try {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", byteArrayOutputStream);
+
+            byte[] imageBytes = byteArrayOutputStream.toByteArray();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {

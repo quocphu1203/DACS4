@@ -9,12 +9,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+
 
 
 public class test2 extends JFrame {
@@ -130,7 +126,7 @@ public class test2 extends JFrame {
             }
         });
     }
-   //
+   
     private List<PrintWriter> clientOutputStreams = new ArrayList<>();
 
     private class AcceptClientsThread implements Runnable {
@@ -160,7 +156,6 @@ public class test2 extends JFrame {
         public ClientCommunicationThread(Socket clientSocket) {
             this.clientSocket = clientSocket;
             
-            //
             try {
                 this.clientOut = new PrintWriter(clientSocket.getOutputStream(), true);
                 clientOutputStreams.add(clientOut);
@@ -192,28 +187,28 @@ public class test2 extends JFrame {
         }
         
 
-		private void sendToTrackingClient(String message) {
-			try {
-	
-		        String trackingClientIp = "127.0.0.1"; 
-		        int trackingClientPort = 8080;
-
-		        Socket trackingClientSocket = new Socket(trackingClientIp, trackingClientPort);
-		        
-		        
-		        PrintWriter trackingClientOut = new PrintWriter(trackingClientSocket.getOutputStream(), true);
-		        
-		       
-		        trackingClientOut.println(message);
-		        
-		        
-		        trackingClientOut.close();
-		        trackingClientSocket.close();
-		    } catch (IOException e) {
-		        e.printStackTrace();
-		    }
-			
-		}
+//		private void sendToTrackingClient(String message) {
+//			try {
+//	
+//		        String trackingClientIp = "127.0.0.1"; 
+//		        int trackingClientPort = 8080;
+//
+//		        Socket trackingClientSocket = new Socket(trackingClientIp, trackingClientPort);
+//		        
+//		        
+//		        PrintWriter trackingClientOut = new PrintWriter(trackingClientSocket.getOutputStream(), true);
+//		        
+//		       
+//		        trackingClientOut.println(message);
+//		        
+//		        
+//		        trackingClientOut.close();
+//		        trackingClientSocket.close();
+//		    } catch (IOException e) {
+//		        e.printStackTrace();
+//		    }
+//			
+//		}
     }
 
     private void updateProcessInfo(String info) {
@@ -244,42 +239,11 @@ public class test2 extends JFrame {
         });
     }
     
-    private void receiveImageAndForwardToTest3() {
-        try {
-            ServerSocket serverSocket = new ServerSocket(8888); 
-
-            while (true) {
-                Socket clientSocket = serverSocket.accept();
-                InputStream inputStream = clientSocket.getInputStream();
-                BufferedImage receivedImage = ImageIO.read(inputStream);
-
-          
-                sendImageToTest3(receivedImage);
-
-                clientSocket.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    private void sendImageToTest3(BufferedImage image) {
-        try {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", byteArrayOutputStream);
-
-            byte[] imageBytes = byteArrayOutputStream.toByteArray();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            test2 serverMonitor = new test2();
-            serverMonitor.setVisible(true);
-            
+        	test2 serverMonitor = new test2();
+            serverMonitor.setVisible(true);           
         });
     }
     

@@ -14,9 +14,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class test1 extends JFrame {
@@ -140,36 +137,16 @@ public class test1 extends JFrame {
      }
  }
  
- private void sendImageToServer(BufferedImage image) {
-     try {
-         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-         ImageIO.write(image, "png", byteArrayOutputStream);
 
-         byte[] imageBytes = byteArrayOutputStream.toByteArray();
-     } catch (IOException e) {
-         e.printStackTrace();
-     }
- }
  
- private void captureAndSendScreen() {
-     try {
-         Robot robot = new Robot();
-         Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
-         BufferedImage screenImage = robot.createScreenCapture(screenRect);
 
-         // Gửi ảnh đến server (test2)
-         sendImageToServer(screenImage);
-     } catch (AWTException e) {
-         e.printStackTrace();
-     }
- }
 
  public static void main(String[] args) {
      SwingUtilities.invokeLater(() -> {
     	 test1 clientApp = new test1();
          clientApp.setVisible(true);
          
-         clientApp.captureAndSendScreen();
+
      });
  }
  

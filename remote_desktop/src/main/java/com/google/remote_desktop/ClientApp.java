@@ -14,6 +14,8 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 
+import java.io.IOException;
+
 public class ClientApp extends JFrame {
  private JTextField serverIpField;
  private JTextField serverPortField;
@@ -134,11 +136,17 @@ public class ClientApp extends JFrame {
          return sdf.format(date);
      }
  }
+ 
+
+ 
+
 
  public static void main(String[] args) {
      SwingUtilities.invokeLater(() -> {
     	 ClientApp clientApp = new ClientApp();
          clientApp.setVisible(true);
+         
+
      });
  }
  

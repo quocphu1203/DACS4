@@ -9,6 +9,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.IOException;
+
+
 
 public class ServerGUI extends JFrame {
     private JLabel statusLabel;
@@ -236,6 +239,7 @@ public class ServerGUI extends JFrame {
             connectedClientsArea.append(clientInfo + "\n");
         });
     }
+    
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

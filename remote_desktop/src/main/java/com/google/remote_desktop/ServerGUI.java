@@ -55,6 +55,7 @@ public class ServerGUI extends JFrame {
         middlePanel.add(scrollPane_1);
 
         processInfoArea = new JTextArea();
+        processInfoArea.setEditable(false);
         scrollPane_1.setViewportView(processInfoArea);
         JScrollPane scrollPane = new JScrollPane(connectedClientsArea);
         middlePanel.add(scrollPane);
@@ -126,7 +127,7 @@ public class ServerGUI extends JFrame {
             }
         });
     }
-   //
+   
     private List<PrintWriter> clientOutputStreams = new ArrayList<>();
 
     private class AcceptClientsThread implements Runnable {
@@ -156,7 +157,6 @@ public class ServerGUI extends JFrame {
         public ClientCommunicationThread(Socket clientSocket) {
             this.clientSocket = clientSocket;
             
-            //
             try {
                 this.clientOut = new PrintWriter(clientSocket.getOutputStream(), true);
                 clientOutputStreams.add(clientOut);
@@ -188,28 +188,28 @@ public class ServerGUI extends JFrame {
         }
         
 
-		private void sendToTrackingClient(String message) {
-			try {
-	
-		        String trackingClientIp = "127.0.0.1"; 
-		        int trackingClientPort = 8080;
-
-		        Socket trackingClientSocket = new Socket(trackingClientIp, trackingClientPort);
-		        
-		        
-		        PrintWriter trackingClientOut = new PrintWriter(trackingClientSocket.getOutputStream(), true);
-		        
-		       
-		        trackingClientOut.println(message);
-		        
-		        
-		        trackingClientOut.close();
-		        trackingClientSocket.close();
-		    } catch (IOException e) {
-		        e.printStackTrace();
-		    }
-			
-		}
+//		private void sendToTrackingClient(String message) {
+//			try {
+//	
+//		        String trackingClientIp = "127.0.0.1"; 
+//		        int trackingClientPort = 8080;
+//
+//		        Socket trackingClientSocket = new Socket(trackingClientIp, trackingClientPort);
+//		        
+//		        
+//		        PrintWriter trackingClientOut = new PrintWriter(trackingClientSocket.getOutputStream(), true);
+//		        
+//		       
+//		        trackingClientOut.println(message);
+//		        
+//		        
+//		        trackingClientOut.close();
+//		        trackingClientSocket.close();
+//		    } catch (IOException e) {
+//		        e.printStackTrace();
+//		    }
+//			
+//		}
     }
 
     private void updateProcessInfo(String info) {
@@ -244,8 +244,7 @@ public class ServerGUI extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
         	ServerGUI serverMonitor = new ServerGUI();
-            serverMonitor.setVisible(true);
-            
+            serverMonitor.setVisible(true);           
         });
     }
     

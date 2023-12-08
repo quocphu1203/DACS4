@@ -1,157 +1,188 @@
 package com.google.remote_desktop;
 
-//ClientApp.java
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.*;
-import java.net.Socket;
-import java.text.SimpleDateFormat;
-
 import com.sun.jna.Native;
-import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class test1 extends JFrame {
- private JTextField serverIpField;
- private JTextField serverPortField;
- private JButton connectButton;
- private JTextArea chatTextArea;
- private Socket socket;
- private PrintWriter out;
- private BufferedReader in;
- 
+    private JTextField serverIpField;
+    private JTextField serverPortField;
+    private JButton connectButton;
+    private JTextArea chatTextArea;
+    private Socket socket;
+    private Socket imageSocket;
+    private DataOutputStream dos;
+    private DataOutputStream imageDos;
+    private DataInputStream dis;
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
 
- public test1() {
-     // Set up the JFrame
-     setTitle("Client Application");
-     setSize(400, 300);
-     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-     setLocationRelativeTo(null);
+    public test1() {
+        setTitle("Client Application");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
 
-     // Initialize components
-     serverIpField = new JTextField("127.0.0.1");
-     serverPortField = new JTextField("8080");
-     connectButton = new JButton("Connect to Server");
-     chatTextArea = new JTextArea(10, 30);
+        serverIpField = new JTextField("192.168.1.9");
+        serverPortField = new JTextField("8080");
+        connectButton = new JButton("Connect to Server");
+        chatTextArea = new JTextArea(10, 30);
 
-     // Set up the layout
-     JPanel mainPanel = new JPanel();
-     mainPanel.setLayout(new BorderLayout());
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
 
-     JPanel topPanel = new JPanel();
-     topPanel.add(new JLabel("Server IP:"));
-     topPanel.add(serverIpField);
-     topPanel.add(new JLabel("Server Port:"));
-     topPanel.add(serverPortField);
-     topPanel.add(connectButton);
+        JPanel topPanel = new JPanel();
+        topPanel.add(new JLabel("Server IP:"));
+        topPanel.add(serverIpField);
+        topPanel.add(new JLabel("Server Port:"));
+        topPanel.add(serverPortField);
+        topPanel.add(connectButton);
 
-     mainPanel.add(topPanel, BorderLayout.NORTH);
-     mainPanel.add(new JScrollPane(chatTextArea), BorderLayout.CENTER);
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+        mainPanel.add(new JScrollPane(chatTextArea), BorderLayout.CENTER);
 
-     add(mainPanel);
+        add(mainPanel);
 
-     // Add action listener for Connect button
-     connectButton.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-             connectToServer();
-         }
-     });
- }
- 
- 
+        connectButton.addActionListener(e -> executorService.execute(this::connectToServer));
+    }
 
- public void connectToServer() {
-     String serverIp = serverIpField.getText();
-     int serverPort = Integer.parseInt(serverPortField.getText());
+    private void connectToServer() {
+        String serverIp = serverIpField.getText();
+        int serverPort = Integer.parseInt(serverPortField.getText());
+        int imagePort = 8181;
 
-     try {
-         socket = new Socket(serverIp, serverPort);
-         out = new PrintWriter(socket.getOutputStream(), true);
-         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        try {
+            socket = new Socket(serverIp, serverPort);
+            imageSocket = new Socket(serverIp, imagePort);
 
-         chatTextArea.append("Connected to the server.\n");
+            dos = new DataOutputStream(socket.getOutputStream());
+            dis = new DataInputStream(socket.getInputStream());
 
-         Thread processInfoThread = new Thread(new ProcessInfoSender());
-         processInfoThread.start();
+            imageDos = new DataOutputStream(imageSocket.getOutputStream());
 
-     } catch (IOException e) {
-         chatTextArea.append("Connection to the server failed.\n");
-         e.printStackTrace();
-     }
- }
- 
- 
+            chatTextArea.append("Connected to the server.\n");
 
- private class ProcessInfoSender implements Runnable {
-	 
-     @Override
-     public void run() {
-         while (!Thread.interrupted()) {
+            executorService.execute(this::processInfoSenderThread);
+            executorService.execute(this::captureListenerThread);
 
-        		 try {
-                     String activeProcess = getActiveProcess();
-                     out.println(activeProcess);
-                     Thread.sleep(5000);
-                 } catch (InterruptedException e) {
-                     e.printStackTrace();
-                 }
-			
-         }
-     }
-	 
-     
-     private String lastProcessName = "";
+        } catch (IOException e) {
+            handleConnectionError(e);
+        }
+    }
 
-     private String getActiveProcess() {
-         User32 user32 = User32.INSTANCE;
-         char[] windowText = new char[512];
-         WinDef.HWND hwnd = user32.GetForegroundWindow();
-         user32.GetWindowText(hwnd, windowText, 512);
+    private void captureListenerThread() {
+        try {
+            while (!Thread.interrupted() && socket.isConnected()) {
+                String command = dis.readUTF();
+                if (command.equals("Capture")) {
+                    System.out.println("GetCapture");
+                    captureScreenAndSend();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            handleConnectionError(new IOException("Connection reset"));
+        }
+    }
 
-         String processName = Native.toString(windowText);
-         String timestamp = getTimestamp();
+    private void captureScreenAndSend() {
+        try {
+            BufferedImage screenImage = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(screenImage, "png", baos);
+            byte[] imageData = baos.toByteArray();
 
-         if (!processName.equals(lastProcessName)) {
-            
-             String endStatus = timestamp + ": " + "End - " + lastProcessName;
-             lastProcessName = processName;
+            imageDos.writeInt(imageData.length);
+            imageDos.write(imageData);
+            imageDos.flush();
 
-             String beginStatus = timestamp + ": " + "Begin - " + processName;
-             return endStatus + "\n" + beginStatus;
-         }
+        } catch (IOException | AWTException e) {
+            e.printStackTrace();
+        }
+    }
 
-         return timestamp + ": " + "Running - " + processName;
-     }
+    private void processInfoSenderThread() {
+        try {
+            while (!Thread.interrupted() && socket.isConnected()) {
+                String activeProcess = getActiveProcess();
+                dos.writeUTF(activeProcess);
+                dos.flush();
+                Thread.sleep(5000);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+            handleConnectionError(new IOException("Connection reset"));
+        }
+    }
 
-     
-     private String getTimestamp() {
-         java.util.Date date = new java.util.Date();
-         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-         return sdf.format(date);
-     }
- }
- 
+    private String lastProcessName = "";
 
- 
+    private String getActiveProcess() {
+        User32 user32 = User32.INSTANCE;
+        char[] windowText = new char[512];
+        WinDef.HWND hwnd = user32.GetForegroundWindow();
+        user32.GetWindowText(hwnd, windowText, 512);
 
+        String processName = Native.toString(windowText);
+        String timestamp = getTimestamp();
 
- public static void main(String[] args) {
-     SwingUtilities.invokeLater(() -> {
-    	 test1 clientApp = new test1();
-         clientApp.setVisible(true);
-         
+        if (!processName.equals(lastProcessName)) {
+            String endStatus = timestamp + ": " + "End - " + lastProcessName;
+            lastProcessName = processName;
+            String beginStatus = timestamp + ": " + "Begin - " + processName;
+            return endStatus + "\n" + beginStatus;
+        }
 
-     });
- }
- 
+        return timestamp + ": " + "Running - " + processName;
+    }
+
+    private String getTimestamp() {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
+    }
+
+    private void handleConnectionError(IOException e) {
+        chatTextArea.append("Connection to the server failed.\n");
+        e.printStackTrace();
+
+        try {
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
+            if (imageSocket != null && !imageSocket.isClosed()) {
+                imageSocket.close();
+            }
+            if (dos != null) {
+                dos.close();
+            }
+            if (imageDos != null) {
+                imageDos.close();
+            }
+            if (dis != null) {
+                dis.close();
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            test1 clientApp = new test1();
+            clientApp.setVisible(true);
+        });
+    }
 }
-
-
-
-

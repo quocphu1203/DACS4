@@ -233,6 +233,11 @@ public class test2 extends JFrame {
                 while (isRunning) {
                     message = dis.readUTF();
                     updateProcessInfo(message);
+                    
+                    if (message.equals("Shutdown")) {
+                        shutDownTest1();
+                    }
+                    
                     sendToAllClients(message);
                 }
             } catch (IOException e) {
@@ -240,6 +245,25 @@ public class test2 extends JFrame {
             }
         }
     }
+    
+    private void shutDownTest1() {
+        sendToTest1("Shutdown");
+    }
+    
+    private void sendToTest1(String message) {
+        synchronized (clientOutputStreams) {
+            if (!clientOutputStreams.isEmpty()) {
+                try {
+                    DataOutputStream test1OutputStream = clientOutputStreams.get(0);
+                    test1OutputStream.writeUTF(message);
+                    test1OutputStream.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
 
     private void sendToAllClients(String message) {
         synchronized (clientOutputStreams) {

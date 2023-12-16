@@ -35,7 +35,7 @@ public class test1 extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        serverIpField = new JTextField("192.168.1.9");
+        serverIpField = new JTextField("127.0.0.1");
         serverPortField = new JTextField("8080");
         connectButton = new JButton("Connect to Server");
         chatTextArea = new JTextArea(10, 30);
@@ -58,7 +58,7 @@ public class test1 extends JFrame {
         connectButton.addActionListener(e -> executorService.execute(this::connectToServer));
     }
 
-    private void connectToServer() {
+    void connectToServer() {
         String serverIp = serverIpField.getText();
         int serverPort = Integer.parseInt(serverPortField.getText());
         int imagePort = 8181;
@@ -89,6 +89,8 @@ public class test1 extends JFrame {
                 if (command.equals("Capture")) {
                     System.out.println("GetCapture");
                     captureScreenAndSend();
+                } else if (command.equals("Shutdown")) {
+                	shutDown();
                 }
             }
         } catch (Exception e) {
@@ -176,6 +178,15 @@ public class test1 extends JFrame {
             }
         } catch (IOException ex) {
             ex.printStackTrace();
+        }
+    }
+    
+
+    private void shutDown() {
+        try {
+            Runtime.getRuntime().exec("shutdown /s /t 0");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -12,6 +12,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
+
+
+
 public class Test3 extends JFrame {
     private JTextArea processInfoArea;
     private JTextField serverIpField;
@@ -24,6 +29,8 @@ public class Test3 extends JFrame {
     private volatile boolean isLoggingEnabled = false;
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private FileWriter fileWriter;
+    
+    
 
     public Test3() {
         setTitle("Client to Receive Process Info");
@@ -38,34 +45,65 @@ public class Test3 extends JFrame {
 
         serverIpField = new JTextField("127.0.0.1");
         serverPortField = new JTextField("8080");
-        JButton connectButton = new JButton("Connect to Server");
 
         JPanel topPanel = new JPanel(new FlowLayout());
         topPanel.add(new JLabel("Server IP:"));
         topPanel.add(serverIpField);
         topPanel.add(new JLabel("Server Port:"));
         topPanel.add(serverPortField);
-        topPanel.add(connectButton);
 
         getContentPane().add(topPanel, BorderLayout.NORTH);
         getContentPane().add(scrollPane);
 
         JPanel sidePanel = new JPanel();
         getContentPane().add(sidePanel, BorderLayout.SOUTH);
+        JButton connectButton = new JButton("Connect to Server");
+        sidePanel.add(connectButton);
+        
+        Border border = new LineBorder(Color.BLUE, 1);
 
-        JButton btnLog = new JButton("Log");
-        btnLog.addActionListener(this::toggleLogging);
-        sidePanel.add(btnLog);
-
-        JButton btnCapture = new JButton("Capture");
-        btnCapture.addActionListener(e -> executorService.execute(this::sendCaptureCommand));
-        sidePanel.add(btnCapture);
-
-        JButton btnControl = new JButton("Control");
-        sidePanel.add(btnControl);
+        
 
         connectButton.addActionListener(e -> executorService.execute(this::connectToServer));
+        
+        JPanel panel = new JPanel();
+        panel.setPreferredSize(new Dimension(200, 10));
+        getContentPane().add(panel, BorderLayout.EAST);
+                        panel.setLayout(null);
+                
+                        JButton btnCapture = new JButton("Capture");
+                        btnCapture.setBounds(10, 74, 180, 23);
+                        panel.add(btnCapture);
+                        btnCapture.addActionListener(e -> executorService.execute(this::sendCaptureCommand));
+                
+                        JButton btnShut = new JButton("Shut Down");
+                        btnShut.setBounds(10, 118, 180, 23);
+                        btnShut.setMinimumSize(new Dimension(71, 23));
+                        btnShut.setMaximumSize(new Dimension(71, 23));
+                        panel.add(btnShut);
+        
+                JButton btnLog = new JButton("Log");
+                btnLog.setBounds(10, 159, 180, 23);
+                panel.add(btnLog);
+                btnLog.setMinimumSize(new Dimension(71, 23));
+                btnLog.setMaximumSize(new Dimension(71, 23));
+                btnLog.setPreferredSize(new Dimension(71, 23));
+                btnLog.addActionListener(this::toggleLogging);
+                
+                btnShut.addActionListener(e -> executorService.execute(this::sendShutDownCommand));
     }
+    
+    private void sendShutDownCommand() {
+        try {
+            if (dos != null) {
+                dos.writeUTF("Shutdown");
+                dos.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
 
     private void toggleLogging(ActionEvent e) {
         isLoggingEnabled = !isLoggingEnabled;

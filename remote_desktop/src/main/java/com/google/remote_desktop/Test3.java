@@ -9,11 +9,14 @@ import java.io.*;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
+import java.awt.event.ActionListener;
 
 
 
@@ -29,12 +32,14 @@ public class Test3 extends JFrame {
     private volatile boolean isLoggingEnabled = false;
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private FileWriter fileWriter;
+    private final Map<String, Long> processUsageMap = new HashMap<>();
+    private long currentProcessStartTime;
     
     
 
     public Test3() {
         setTitle("Client to Receive Process Info");
-        setSize(418, 656);
+        setSize(714, 656);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -88,6 +93,15 @@ public class Test3 extends JFrame {
                 btnLog.setMinimumSize(new Dimension(71, 23));
                 btnLog.setMaximumSize(new Dimension(71, 23));
                 btnLog.setPreferredSize(new Dimension(71, 23));
+                
+                JButton btnNewButton = new JButton("Statistical");
+                btnNewButton.addActionListener(new ActionListener() {
+                	public void actionPerformed(ActionEvent e) {
+                		displayAppUsageStatistics();
+                	}
+                });
+                btnNewButton.setBounds(10, 203, 180, 23);
+                panel.add(btnNewButton);
                 btnLog.addActionListener(this::toggleLogging);
                 
                 btnShut.addActionListener(e -> executorService.execute(this::sendShutDownCommand));
@@ -153,7 +167,7 @@ public class Test3 extends JFrame {
                 BufferedImage capturedImage = ImageIO.read(byteArrayInputStream);
 
 
-                File directory = new File("D:/image/");
+                File directory = new File("C:/Users/ACER/OneDrive - MSFT/Pictures/Phim");
                 if (!directory.exists()) {
                     directory.mkdirs();
                 }
@@ -161,13 +175,26 @@ public class Test3 extends JFrame {
                 File imageFile = new File(directory, "img" + getTime() + ".png");
                 ImageIO.write(capturedImage, "png", imageFile);
                 System.out.println("Luu hình anh");
+                displayImage(capturedImage);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
+    public static void displayImage(BufferedImage capturedImage) {
+		int desiredWidth = capturedImage.getWidth() / 3;
+		int desiredHeight = capturedImage.getHeight() / 3;
+		BufferedImage resizedImage = new BufferedImage(desiredWidth, desiredHeight, BufferedImage.TYPE_INT_ARGB);
+		resizedImage.getGraphics().drawImage(capturedImage, 0, 0, desiredWidth, desiredHeight, null);
+		ImageIcon icon = new ImageIcon(resizedImage);
+		JOptionPane.showMessageDialog(
+		        null,
+		        icon,
+		        "Hình ảnh",
+		        JOptionPane.PLAIN_MESSAGE
+		);
+    }
+    
     private static String getTime() {
         return DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss").format(LocalDateTime.now());
     }
@@ -182,11 +209,58 @@ public class Test3 extends JFrame {
             e.printStackTrace();
         }
     }
+    private String formatTime(long milliseconds) {
+        long seconds = milliseconds / 1000;
+        long hours = seconds / 3600;
+        long minutes = (seconds % 3600) / 60;
+        long remainingSeconds = seconds % 60;
+        return String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds);
+    }
+    private void displayAppUsageStatistics() {
+        System.out.println("DEBUG: processUsageMap = " + processUsageMap);
+        StringBuilder message = new StringBuilder("Thống Kê Thời Gian Chạy Tiến Trình:\n");
+        for (Map.Entry<String, Long> entry : processUsageMap.entrySet()) {
+            String processName = entry.getKey();
+            long processUsage = entry.getValue();
 
+            if (processUsage > 0) {
+                message.append("[").append(processName).append("] : ").append(formatTime(processUsage)).append("\n");
+            }
+        }
+        if (message.length() == 0) {
+            message.append("Không có dữ liệu thống kê.");
+        }
+
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                JOptionPane.showMessageDialog(Test3.this, message.toString(), "Thống Kê Thời Gian Chạy", JOptionPane.INFORMATION_MESSAGE);
+                return null;
+            }
+        };
+
+        worker.execute();
+    }
     private void updateProcessInfo(String info) {
         processInfoArea.append(info + "\n");
         if (isLoggingEnabled) {
             logProcessInfo(info);
+        }
+        String[] parts = info.split(" - ");
+        if (parts.length == 3) {
+            String status = parts[1].trim();
+            String processName = parts[2].trim();
+
+            if (status.equals("Begin")) {
+                currentProcessStartTime = System.currentTimeMillis();
+            } else if (status.equals("End") || status.equals("Running")) {
+                long processUsage = System.currentTimeMillis() - currentProcessStartTime;
+                processUsageMap.merge(processName, processUsage, Long::sum);
+
+                if (status.equals("End")) {
+                    currentProcessStartTime = 0;
+                }
+            }
         }
     }
 

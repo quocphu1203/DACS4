@@ -143,17 +143,17 @@ public class test1 extends JFrame {
         String timestamp = getTimestamp();
 
         if (!processName.equals(lastProcessName)) {
-            String endStatus = timestamp + ": " + "End - " + lastProcessName;
+            String endStatus = timestamp + " - " + "End - " + lastProcessName;
             lastProcessName = processName;
-            String beginStatus = timestamp + ": " + "Begin - " + processName;
+            String beginStatus = timestamp + " - " + "Begin - " + processName;
             return endStatus + "\n" + beginStatus;
         }
 
-        return timestamp + ": " + "Running - " + processName;
+        return timestamp + " - " + "Running - " + processName;
     }
 
     private String getTimestamp() {
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
+        return new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(new java.util.Date());
     }
 
     private void handleConnectionError(IOException e) {
@@ -177,7 +177,7 @@ public class test1 extends JFrame {
                 dis.close();
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
+            chatTextArea.append("Server is closed. \n");
         }
     }
     

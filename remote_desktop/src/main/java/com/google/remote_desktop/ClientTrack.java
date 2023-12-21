@@ -100,7 +100,7 @@ public class ClientTrack extends JFrame {
     }
     
     private void captureScreenAndSend() {
-
+        // Chụp ảnh và gửi đi
         try {
             Robot robot = new Robot();
             Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
@@ -204,20 +204,13 @@ public class ClientTrack extends JFrame {
     }
 
     private void captureAndShowImage() {
+        // Xử lý chụp ảnh và hiển thị thông báo
         try {
             BufferedImage image = ImageIO.read(new File("C:\\Users\\ASUS\\Pictures\\path_to_your_captured_image.jpg")); // Đường dẫn ảnh đã chụp
             if (image != null) {
                 ImageIcon icon = new ImageIcon(image);
                 JOptionPane.showMessageDialog(this, "Image saved at  C:\\Users\\ASUS\\Pictures", "Nontification", JOptionPane.INFORMATION_MESSAGE, icon);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
-        private void shutDown() {
-        try {
-            Runtime.getRuntime().exec("shutdown /s /t 0");
         } catch (IOException e) {
             e.printStackTrace();
         }

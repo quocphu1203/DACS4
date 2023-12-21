@@ -18,7 +18,7 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,-10,0,0,2,119"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,-12,0,0,2,119"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
@@ -91,7 +91,7 @@
               <Color blue="0" green="99" red="33" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="C:\Users\ASUS\Documents\icon\link.png"/>
+              <Image iconType="3" name="/link.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Connect"/>
           </Properties>
@@ -145,7 +145,7 @@
               <Color blue="0" green="0" red="99" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="C:\Users\ASUS\Documents\icon\on-off-button.png"/>
+              <Image iconType="3" name="/on-off-button.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Shut down"/>
           </Properties>
@@ -257,7 +257,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="C:\Users\ASUS\Documents\icon\statistics.png"/>
+              <Image iconType="2" name="C:\Users\ASUS\git\repository\remote_desktop\src\main\java\com\google\remote_desktop\icon\statistics.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Statistics"/>
             <Property name="iconTextGap" type="int" value="8"/>
@@ -272,7 +272,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="C:\Users\ASUS\Documents\icon\files.png"/>
+              <Image iconType="2" name="C:\Users\ASUS\git\repository\remote_desktop\src\main\java\com\google\remote_desktop\icon\files.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Log"/>
             <Property name="iconTextGap" type="int" value="12"/>
@@ -285,7 +285,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="C:\Users\ASUS\Documents\icon\photo-capture.png"/>
+              <Image iconType="3" name="/photo-capture.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Capture"/>
             <Property name="iconTextGap" type="int" value="8"/>

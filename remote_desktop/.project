@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-<<<<<<< HEAD
 	<name>remote_desktop</name>
-=======
-	<name>DACS4</name>
->>>>>>> eac149e1f74bbc0a24f7e578a2635643871c4be5
 	<comment></comment>
 	<projects>
 	</projects>
 	<buildSpec>
-<<<<<<< HEAD
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>
@@ -36,9 +31,4 @@
 			</matcher>
 		</filter>
 	</filteredResources>
-=======
-	</buildSpec>
-	<natures>
-	</natures>
->>>>>>> eac149e1f74bbc0a24f7e578a2635643871c4be5
 </projectDescription>

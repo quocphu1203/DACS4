@@ -8,6 +8,8 @@ import java.io.*;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -23,11 +25,28 @@ public class TrackTest extends javax.swing.JFrame {
     private volatile boolean isLoggingEnabled = false;
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private FileWriter fileWriter;
+    private final Map<String, Long> processUsageMap = new HashMap<>();
+    private long currentProcessStartTime;
 
     public TrackTest() {
         initComponents();
-        connectButton.addActionListener(e -> executorService.execute(this::connectToServer));
+        
+        connectButton.addActionListener(e -> executorService.execute(this::connectToServer)); 
         btnLog.addActionListener(this::toggleLogging);
+        btnShut.addActionListener(e -> executorService.execute(this::sendShutDownCommand));
+        btnCapture.addActionListener(e -> executorService.execute(this::sendCaptureCommand));
+        
+    }
+    
+    private void sendShutDownCommand() {
+        try {
+            if (dos != null) {
+                dos.writeUTF("Shutdown");
+                dos.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     private void toggleLogging(ActionEvent e) {
@@ -173,7 +192,7 @@ public class TrackTest extends javax.swing.JFrame {
 
         connectButton.setBackground(new java.awt.Color(255, 255, 255));
         connectButton.setForeground(new java.awt.Color(51, 153, 0));
-        connectButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\ASUS\\Documents\\icon\\link.png")); // NOI18N
+        connectButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/link.png"))); // NOI18N
         connectButton.setText("Connect");
         topPanel.add(connectButton);
 
@@ -184,7 +203,7 @@ public class TrackTest extends javax.swing.JFrame {
 
         btnShut.setBackground(new java.awt.Color(102, 153, 255));
         btnShut.setForeground(new java.awt.Color(153, 0, 0));
-        btnShut.setIcon(new javax.swing.ImageIcon("C:\\Users\\ASUS\\Documents\\icon\\on-off-button.png")); // NOI18N
+        btnShut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/on-off-button.png"))); // NOI18N
         btnShut.setText("Shut down");
 
         javax.swing.GroupLayout botPanelLayout = new javax.swing.GroupLayout(botPanel);
@@ -234,7 +253,7 @@ public class TrackTest extends javax.swing.JFrame {
         sidePanel.setBackground(new java.awt.Color(25, 29, 74));
 
         btnStatis.setBackground(new java.awt.Color(255, 255, 255));
-        btnStatis.setIcon(new javax.swing.ImageIcon("C:\\Users\\ASUS\\Documents\\icon\\statistics.png")); // NOI18N
+        btnStatis.setIcon(new javax.swing.ImageIcon("C:\\Users\\ASUS\\git\\repository\\remote_desktop\\src\\main\\java\\com\\google\\remote_desktop\\icon\\statistics.png")); // NOI18N
         btnStatis.setText("Statistics");
         btnStatis.setIconTextGap(8);
         btnStatis.addActionListener(new java.awt.event.ActionListener() {
@@ -244,13 +263,13 @@ public class TrackTest extends javax.swing.JFrame {
         });
 
         btnLog.setBackground(new java.awt.Color(255, 255, 255));
-        btnLog.setIcon(new javax.swing.ImageIcon("C:\\Users\\ASUS\\Documents\\icon\\files.png")); // NOI18N
+        btnLog.setIcon(new javax.swing.ImageIcon("C:\\Users\\ASUS\\git\\repository\\remote_desktop\\src\\main\\java\\com\\google\\remote_desktop\\icon\\files.png")); // NOI18N
         btnLog.setText("Log");
         btnLog.setIconTextGap(12);
         btnLog.setInheritsPopupMenu(true);
 
         btnCapture.setBackground(new java.awt.Color(255, 255, 255));
-        btnCapture.setIcon(new javax.swing.ImageIcon("C:\\Users\\ASUS\\Documents\\icon\\photo-capture.png")); // NOI18N
+        btnCapture.setIcon(new javax.swing.ImageIcon(getClass().getResource("/photo-capture.png"))); // NOI18N
         btnCapture.setText("Capture");
         btnCapture.setIconTextGap(8);
 

@@ -27,5 +27,3 @@
 2023-12-17 20:06:10: Running - Client to Receive Process Info
 2023-12-17 20:06:15: Running - Client to Receive Process Info
 2023-12-17 20:06:20: Running - Client to Receive Process Info
-2023-12-20 15:05:17: Running - 
-2023-12-20 15:05:22: Running - 

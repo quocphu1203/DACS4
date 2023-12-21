@@ -8,6 +8,8 @@ import java.io.*;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -23,11 +25,30 @@ public class TrackTest extends javax.swing.JFrame {
     private volatile boolean isLoggingEnabled = false;
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private FileWriter fileWriter;
+    private final Map<String, Long> processUsageMap = new HashMap<>();
+    private long currentProcessStartTime;
 
     public TrackTest() {
+    	setTitle("Client to Receive Process Info");
         initComponents();
-        connectButton.addActionListener(e -> executorService.execute(this::connectToServer));
+        
+        connectButton.addActionListener(e -> executorService.execute(this::connectToServer)); 
         btnLog.addActionListener(this::toggleLogging);
+        btnShut.addActionListener(e -> executorService.execute(this::sendShutDownCommand));
+        btnCapture.addActionListener(e -> executorService.execute(this::sendCaptureCommand));
+        btnStatis.addActionListener(e -> executorService.execute(this::displayAppUsageStatistics));
+        
+    }
+    
+    private void sendShutDownCommand() {
+        try {
+            if (dos != null) {
+                dos.writeUTF("Shutdown");
+                dos.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     private void toggleLogging(ActionEvent e) {
@@ -78,7 +99,7 @@ public class TrackTest extends javax.swing.JFrame {
                 BufferedImage capturedImage = ImageIO.read(byteArrayInputStream);
 
 
-                File directory = new File("D:/image/");
+                File directory = new File("C:/Users/ACER/OneDrive - MSFT/Pictures/Phim");
                 if (!directory.exists()) {
                     directory.mkdirs();
                 }
@@ -86,11 +107,25 @@ public class TrackTest extends javax.swing.JFrame {
                 File imageFile = new File(directory, "img" + getTime() + ".png");
                 ImageIO.write(capturedImage, "png", imageFile);
                 System.out.println("Luu hình anh");
+                displayImage(capturedImage);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+      public static void displayImage(BufferedImage capturedImage) {
+  		int desiredWidth = capturedImage.getWidth() / 3;
+  		int desiredHeight = capturedImage.getHeight() / 3;
+  		BufferedImage resizedImage = new BufferedImage(desiredWidth, desiredHeight, BufferedImage.TYPE_INT_ARGB);
+  		resizedImage.getGraphics().drawImage(capturedImage, 0, 0, desiredWidth, desiredHeight, null);
+  		ImageIcon icon = new ImageIcon(resizedImage);
+  		JOptionPane.showMessageDialog(
+  		        null,
+  		        icon,
+  		        "Hình ảnh",
+  		        JOptionPane.PLAIN_MESSAGE
+  		);
+      }
       
           private static String getTime() {
         return DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss").format(LocalDateTime.now());
@@ -106,13 +141,61 @@ public class TrackTest extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
+    private String formatTime(long milliseconds) {
+        long seconds = milliseconds / 1000;
+        long hours = seconds / 3600;
+        long minutes = (seconds % 3600) / 60;
+        long remainingSeconds = seconds % 60;
+        return String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds);
+    }
+    private void displayAppUsageStatistics() {
+        System.out.println("DEBUG: processUsageMap = " + processUsageMap);
+        StringBuilder message = new StringBuilder("Thống Kê Thời Gian Chạy Tiến Trình:\n");
+        for (Map.Entry<String, Long> entry : processUsageMap.entrySet()) {
+            String processName = entry.getKey();
+            long processUsage = entry.getValue();
 
+            if (processUsage > 0) {
+                message.append("[").append(processName).append("] : ").append(formatTime(processUsage)).append("\n");
+            }
+        }
+        if (message.length() == 0) {
+            message.append("Không có dữ liệu thống kê.");
+        }
+
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                JOptionPane.showMessageDialog(TrackTest.this, message.toString(), "Thống Kê Thời Gian Chạy", JOptionPane.INFORMATION_MESSAGE);
+                return null;
+            }
+        };
+
+        worker.execute();
+    }
     private void updateProcessInfo(String info) {
         processInfoArea.append(info + "\n");
         if (isLoggingEnabled) {
             logProcessInfo(info);
         }
+        String[] parts = info.split(" - ");
+        if (parts.length == 3) {
+            String status = parts[1].trim();
+            String processName = parts[2].trim();
+
+            if (status.equals("Begin")) {
+                currentProcessStartTime = System.currentTimeMillis();
+            } else if (status.equals("End") || status.equals("Running")) {
+                long processUsage = System.currentTimeMillis() - currentProcessStartTime;
+                processUsageMap.merge(processName, processUsage, Long::sum);
+
+                if (status.equals("End")) {
+                    currentProcessStartTime = 0;
+                }
+            }
+        }
     }
+
 
     private void logProcessInfo(String info) {
         try {
@@ -173,7 +256,7 @@ public class TrackTest extends javax.swing.JFrame {
 
         connectButton.setBackground(new java.awt.Color(255, 255, 255));
         connectButton.setForeground(new java.awt.Color(51, 153, 0));
-        connectButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\ASUS\\Documents\\icon\\link.png")); // NOI18N
+        connectButton.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS\\DACS4\\src\\main\\java\\com\\google\\remote_desktop\\icon\\link.png")); // NOI18N
         connectButton.setText("Connect");
         topPanel.add(connectButton);
 
@@ -184,7 +267,7 @@ public class TrackTest extends javax.swing.JFrame {
 
         btnShut.setBackground(new java.awt.Color(102, 153, 255));
         btnShut.setForeground(new java.awt.Color(153, 0, 0));
-        btnShut.setIcon(new javax.swing.ImageIcon("C:\\Users\\ASUS\\Documents\\icon\\on-off-button.png")); // NOI18N
+        btnShut.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS\\DACS4\\src\\main\\java\\com\\google\\remote_desktop\\icon\\on-off-button.png")); // NOI18N
         btnShut.setText("Shut down");
 
         javax.swing.GroupLayout botPanelLayout = new javax.swing.GroupLayout(botPanel);
@@ -234,7 +317,7 @@ public class TrackTest extends javax.swing.JFrame {
         sidePanel.setBackground(new java.awt.Color(25, 29, 74));
 
         btnStatis.setBackground(new java.awt.Color(255, 255, 255));
-        btnStatis.setIcon(new javax.swing.ImageIcon("C:\\Users\\ASUS\\Documents\\icon\\statistics.png")); // NOI18N
+        btnStatis.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS\\DACS4\\src\\main\\java\\com\\google\\remote_desktop\\icon\\statistics.png")); // NOI18N
         btnStatis.setText("Statistics");
         btnStatis.setIconTextGap(8);
         btnStatis.addActionListener(new java.awt.event.ActionListener() {
@@ -244,13 +327,13 @@ public class TrackTest extends javax.swing.JFrame {
         });
 
         btnLog.setBackground(new java.awt.Color(255, 255, 255));
-        btnLog.setIcon(new javax.swing.ImageIcon("C:\\Users\\ASUS\\Documents\\icon\\files.png")); // NOI18N
+        btnLog.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS\\DACS4\\src\\main\\java\\com\\google\\remote_desktop\\icon\\files.png")); // NOI18N
         btnLog.setText("Log");
         btnLog.setIconTextGap(12);
         btnLog.setInheritsPopupMenu(true);
 
         btnCapture.setBackground(new java.awt.Color(255, 255, 255));
-        btnCapture.setIcon(new javax.swing.ImageIcon("C:\\Users\\ASUS\\Documents\\icon\\photo-capture.png")); // NOI18N
+        btnCapture.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS\\DACS4\\src\\main\\java\\com\\google\\remote_desktop\\icon\\photo-capture.png")); // NOI18N
         btnCapture.setText("Capture");
         btnCapture.setIconTextGap(8);
 

@@ -87,24 +87,20 @@ public class Test3 extends JFrame {
                         btnShut.setMaximumSize(new Dimension(71, 23));
                         panel.add(btnShut);
         
-                JButton btnLog = new JButton("Log");
-                btnLog.setBounds(10, 159, 180, 23);
-                panel.add(btnLog);
-                btnLog.setMinimumSize(new Dimension(71, 23));
-                btnLog.setMaximumSize(new Dimension(71, 23));
-                btnLog.setPreferredSize(new Dimension(71, 23));
-                
-                JButton btnNewButton = new JButton("Statistical");
-                btnNewButton.addActionListener(new ActionListener() {
-                	public void actionPerformed(ActionEvent e) {
-                		displayAppUsageStatistics();
-                	}
-                });
-                btnNewButton.setBounds(10, 203, 180, 23);
-                panel.add(btnNewButton);
-                btnLog.addActionListener(this::toggleLogging);
-                
-                btnShut.addActionListener(e -> executorService.execute(this::sendShutDownCommand));
+		                JButton btnLog = new JButton("Log");
+		                btnLog.setBounds(10, 159, 180, 23);
+		                panel.add(btnLog);
+		                btnLog.setMinimumSize(new Dimension(71, 23));
+		                btnLog.setMaximumSize(new Dimension(71, 23));
+		                btnLog.setPreferredSize(new Dimension(71, 23));
+		                
+		                JButton btnNewButton = new JButton("Statistical");
+		                btnNewButton.addActionListener(e -> executorService.execute(this::displayAppUsageStatistics));
+		                btnNewButton.setBounds(10, 203, 180, 23);
+		                panel.add(btnNewButton);
+		                btnLog.addActionListener(this::toggleLogging);
+		                
+		                btnShut.addActionListener(e -> executorService.execute(this::sendShutDownCommand));
     }
     
     private void sendShutDownCommand() {
@@ -159,6 +155,7 @@ public class Test3 extends JFrame {
     private void captureScreenThread() {
         try {
             while (!imageSocket.isClosed()) {
+            	
                 int imageSize = imageDis.readInt();
                 byte[] imageData = new byte[imageSize];
 

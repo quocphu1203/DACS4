@@ -27,3 +27,45 @@
 2023-12-17 20:06:10: Running - Client to Receive Process Info
 2023-12-17 20:06:15: Running - Client to Receive Process Info
 2023-12-17 20:06:20: Running - Client to Receive Process Info
+2023.12.18 00:25:29 - Running - 
+2023.12.18 00:25:34 - Running - 
+2023.12.18 00:25:39 - End - 
+2023.12.18 00:25:39 - Begin - IdeaProjects - remote_desktop/info.txt - Eclipse IDE
+2023.12.18 00:25:44 - Running - IdeaProjects - remote_desktop/info.txt - Eclipse IDE
+2023.12.18 00:25:49 - Running - IdeaProjects - remote_desktop/info.txt - Eclipse IDE
+2023.12.18 00:25:54 - End - IdeaProjects - remote_desktop/info.txt - Eclipse IDE
+2023.12.18 00:25:54 - Begin - 
+2023.12.18 00:25:59 - Running - 
+2023.12.18 00:26:04 - End - 
+2023.12.18 00:26:04 - Begin - IdeaProjects - remote_desktop/src/main/java/com/google/remote_desktop/TrackTest.java - Eclipse IDE
+2023.12.18 00:26:09 - Running - IdeaProjects - remote_desktop/src/main/java/com/google/remote_desktop/TrackTest.java - Eclipse IDE
+2023.12.18 00:26:14 - Running - IdeaProjects - remote_desktop/src/main/java/com/google/remote_desktop/TrackTest.java - Eclipse IDE
+2023.12.18 00:26:19 - Running - IdeaProjects - remote_desktop/src/main/java/com/google/remote_desktop/TrackTest.java - Eclipse IDE
+2023.12.18 00:26:24 - Running - IdeaProjects - remote_desktop/src/main/java/com/google/remote_desktop/TrackTest.java - Eclipse IDE
+2023.12.18 00:26:29 - End - IdeaProjects - remote_desktop/src/main/java/com/google/remote_desktop/TrackTest.java - Eclipse IDE
+2023.12.18 00:26:29 - Begin - 
+2023.12.18 00:26:34 - End - 
+2023.12.18 00:26:34 - Begin - IdeaProjects - remote_desktop/src/main/java/com/google/remote_desktop/TrackTest.java - Eclipse IDE
+2023.12.18 00:26:39 - Running - IdeaProjects - remote_desktop/src/main/java/com/google/remote_desktop/TrackTest.java - Eclipse IDE
+2023.12.18 00:26:44 - Running - IdeaProjects - remote_desktop/src/main/java/com/google/remote_desktop/TrackTest.java - Eclipse IDE
+2023.12.18 00:26:49 - Running - IdeaProjects - remote_desktop/src/main/java/com/google/remote_desktop/TrackTest.java - Eclipse IDE
+2023.12.18 00:26:54 - End - IdeaProjects - remote_desktop/src/main/java/com/google/remote_desktop/TrackTest.java - Eclipse IDE
+2023.12.18 00:26:54 - Begin - IdeaProjects - remote_desktop/src/main/java/com/google/remote_desktop/TrackTest.java - Eclipse IDE (Not Responding)
+2023.12.18 00:26:59 - End - IdeaProjects - remote_desktop/src/main/java/com/google/remote_desktop/TrackTest.java - Eclipse IDE (Not Responding)
+2023.12.18 00:26:59 - Begin - 
+2023.12.20 10:33:16 - End - Client to Receive Process Info
+2023.12.20 10:33:16 - Begin - IdeaProjects - remote_desktop/info.txt - Eclipse IDE
+2023.12.20 10:33:22 - Running - IdeaProjects - remote_desktop/info.txt - Eclipse IDE
+2023.12.20 10:33:27 - Running - IdeaProjects - remote_desktop/info.txt - Eclipse IDE
+2023.12.20 10:33:32 - End - IdeaProjects - remote_desktop/info.txt - Eclipse IDE
+2023.12.20 10:33:32 - Begin - Client to Receive Process Info
+Capture
+2023.12.20 10:33:37 - Running - Client to Receive Process Info
+2023.12.20 10:33:42 - Running - Client to Receive Process Info
+2023.12.20 10:33:47 - Running - Client to Receive Process Info
+2023.12.20 10:33:52 - End - Client to Receive Process Info
+2023.12.20 10:33:52 - Begin - IdeaProjects - remote_desktop/src/main/java/com/google/remote_desktop/Test3.java - Eclipse IDE
+2023.12.20 10:33:57 - Running - IdeaProjects - remote_desktop/src/main/java/com/google/remote_desktop/Test3.java - Eclipse IDE
+2023.12.20 10:34:02 - Running - IdeaProjects - remote_desktop/src/main/java/com/google/remote_desktop/Test3.java - Eclipse IDE
+2023.12.20 10:34:07 - Running - IdeaProjects - remote_desktop/src/main/java/com/google/remote_desktop/Test3.java - Eclipse IDE
+2023.12.20 10:34:12 - Running - IdeaProjects - remote_desktop/src/main/java/com/google/remote_desktop/Test3.java - Eclipse IDE

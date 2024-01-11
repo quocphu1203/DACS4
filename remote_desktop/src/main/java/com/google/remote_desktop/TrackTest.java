@@ -282,7 +282,7 @@ public class TrackTest extends javax.swing.JFrame {
 
         connectButton.setBackground(new java.awt.Color(255, 255, 255));
         connectButton.setForeground(new java.awt.Color(51, 153, 0));
-        connectButton.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS4\\src\\main\\resources\\link.png")); // NOI18N
+        connectButton.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS4\\remote_desktop\\src\\main\\java\\com\\google\\remote_desktop\\icon\\link.png")); // NOI18N
         connectButton.setText("Connect");
         topPanel.add(connectButton);
 
@@ -293,7 +293,7 @@ public class TrackTest extends javax.swing.JFrame {
 
         btnShut.setBackground(new java.awt.Color(102, 153, 255));
         btnShut.setForeground(new java.awt.Color(153, 0, 0));
-        btnShut.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS4\\src\\main\\resources\\on-off-button.png")); // NOI18N
+        btnShut.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS4\\remote_desktop\\src\\main\\java\\com\\google\\remote_desktop\\icon\\on-off-button.png")); // NOI18N
         btnShut.setText("Shut down");
 
         javax.swing.GroupLayout botPanelLayout = new javax.swing.GroupLayout(botPanel);
@@ -343,7 +343,7 @@ public class TrackTest extends javax.swing.JFrame {
         sidePanel.setBackground(new java.awt.Color(25, 29, 74));
 
         btnStatis.setBackground(new java.awt.Color(255, 255, 255));
-        btnStatis.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS4\\src\\main\\resources\\1564531_chart_business_graph_statistics_icon.png")); // NOI18N
+        btnStatis.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS4\\remote_desktop\\src\\main\\java\\com\\google\\remote_desktop\\icon\\statistics.png")); // NOI18N
         btnStatis.setText("Statistics");
         btnStatis.setIconTextGap(8);
         btnStatis.addActionListener(new java.awt.event.ActionListener() {
@@ -353,13 +353,13 @@ public class TrackTest extends javax.swing.JFrame {
         });
 
         btnLog.setBackground(new java.awt.Color(255, 255, 255));
-        btnLog.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS4\\src\\main\\resources\\5386919_file_format_log_type_icon (1).png")); // NOI18N
+        btnLog.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS4\\remote_desktop\\src\\main\\java\\com\\google\\remote_desktop\\icon\\files.png")); // NOI18N
         btnLog.setText("Log");
         btnLog.setIconTextGap(12);
         btnLog.setInheritsPopupMenu(true);
 
         btnCapture.setBackground(new java.awt.Color(255, 255, 255));
-        btnCapture.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS4\\src\\main\\resources\\photo-capture.png")); // NOI18N
+        btnCapture.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS4\\remote_desktop\\src\\main\\java\\com\\google\\remote_desktop\\icon\\photo-capture.png")); // NOI18N
         btnCapture.setText("Capture");
         btnCapture.setIconTextGap(8);
 

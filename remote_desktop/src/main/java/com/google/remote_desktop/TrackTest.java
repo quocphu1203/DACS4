@@ -27,6 +27,8 @@ public class TrackTest extends javax.swing.JFrame {
     private FileWriter fileWriter;
     private final Map<String, Long> processUsageMap = new HashMap<>();
     private long currentProcessStartTime;
+    private volatile boolean isServerConnected = false;
+
 
     public TrackTest() {
     	setTitle("Client to Receive Process Info");
@@ -68,12 +70,14 @@ public class TrackTest extends javax.swing.JFrame {
             dos = new DataOutputStream(socket.getOutputStream());
             dis = new DataInputStream(socket.getInputStream());
             imageDis = new DataInputStream(imageSocket.getInputStream());
+            isServerConnected = true;
 
             executorService.execute(this::captureScreenThread);
             executorService.execute(this::startProcessInfoThread);
 
         } catch (IOException ex) {
             ex.printStackTrace();
+            isServerConnected = false;
         }
     }
      
@@ -133,12 +137,14 @@ public class TrackTest extends javax.swing.JFrame {
 
     private void startProcessInfoThread() {
         try {
-            while (!socket.isClosed()) {
+            while (socket.isConnected() && !socket.isClosed()) {
                 String message = dis.readUTF();
                 SwingUtilities.invokeLater(() -> updateProcessInfo(message));
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+        	closeSockets();
         }
     }
     private String formatTime(long milliseconds) {
@@ -208,6 +214,26 @@ public class TrackTest extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
+    private void closeSockets() {
+        try {
+            // Close sockets and streams
+            if (imageDis != null) imageDis.close();
+            if (dis != null) dis.close();
+            if (dos != null) dos.close();
+            if (imageSocket != null) imageSocket.close();
+            if (socket != null) socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Update connection status
+        isServerConnected = false;
+
+        // Display a message if the connection is closed
+        SwingUtilities.invokeLater(() -> {
+            JOptionPane.showMessageDialog(this, "Server connection closed.", "Connection Closed", JOptionPane.INFORMATION_MESSAGE);
+        });
+    }
 
 
     @SuppressWarnings("unchecked")
@@ -256,7 +282,7 @@ public class TrackTest extends javax.swing.JFrame {
 
         connectButton.setBackground(new java.awt.Color(255, 255, 255));
         connectButton.setForeground(new java.awt.Color(51, 153, 0));
-        connectButton.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS\\DACS4\\src\\main\\java\\com\\google\\remote_desktop\\icon\\link.png")); // NOI18N
+        connectButton.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS4\\src\\main\\resources\\link.png")); // NOI18N
         connectButton.setText("Connect");
         topPanel.add(connectButton);
 
@@ -267,7 +293,7 @@ public class TrackTest extends javax.swing.JFrame {
 
         btnShut.setBackground(new java.awt.Color(102, 153, 255));
         btnShut.setForeground(new java.awt.Color(153, 0, 0));
-        btnShut.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS\\DACS4\\src\\main\\java\\com\\google\\remote_desktop\\icon\\on-off-button.png")); // NOI18N
+        btnShut.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS4\\src\\main\\resources\\on-off-button.png")); // NOI18N
         btnShut.setText("Shut down");
 
         javax.swing.GroupLayout botPanelLayout = new javax.swing.GroupLayout(botPanel);
@@ -317,7 +343,7 @@ public class TrackTest extends javax.swing.JFrame {
         sidePanel.setBackground(new java.awt.Color(25, 29, 74));
 
         btnStatis.setBackground(new java.awt.Color(255, 255, 255));
-        btnStatis.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS\\DACS4\\src\\main\\java\\com\\google\\remote_desktop\\icon\\statistics.png")); // NOI18N
+        btnStatis.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS4\\src\\main\\resources\\1564531_chart_business_graph_statistics_icon.png")); // NOI18N
         btnStatis.setText("Statistics");
         btnStatis.setIconTextGap(8);
         btnStatis.addActionListener(new java.awt.event.ActionListener() {
@@ -327,13 +353,13 @@ public class TrackTest extends javax.swing.JFrame {
         });
 
         btnLog.setBackground(new java.awt.Color(255, 255, 255));
-        btnLog.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS\\DACS4\\src\\main\\java\\com\\google\\remote_desktop\\icon\\files.png")); // NOI18N
+        btnLog.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS4\\src\\main\\resources\\5386919_file_format_log_type_icon (1).png")); // NOI18N
         btnLog.setText("Log");
         btnLog.setIconTextGap(12);
         btnLog.setInheritsPopupMenu(true);
 
         btnCapture.setBackground(new java.awt.Color(255, 255, 255));
-        btnCapture.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS\\DACS4\\src\\main\\java\\com\\google\\remote_desktop\\icon\\photo-capture.png")); // NOI18N
+        btnCapture.setIcon(new ImageIcon("C:\\Users\\ACER\\IdeaProjects\\DACS4\\src\\main\\resources\\photo-capture.png")); // NOI18N
         btnCapture.setText("Capture");
         btnCapture.setIconTextGap(8);
 

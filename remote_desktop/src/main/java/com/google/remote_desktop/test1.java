@@ -30,7 +30,7 @@ public class test1 extends JFrame {
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     public test1() {
-        setTitle("Client Application");
+        setTitle("Client Application FSDFSDF");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);

@@ -19,6 +19,7 @@ public class test2 extends JFrame {
     private JTextArea connectedClientsArea;
     private JButton startServerButton;
     private JButton stopServerButton;
+    
     private ServerSocket serverSocket;
     private ServerSocket serverImageSocket;
     private JTextArea processInfoArea;
@@ -31,7 +32,7 @@ public class test2 extends JFrame {
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     public test2() {
-        setTitle("Server Monitor");
+        setTitle("Server 2 SSS   sadfsdfasSS");
         setSize(830, 528);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -96,8 +97,10 @@ public class test2 extends JFrame {
                 serverImageSocket = new ServerSocket(imagePort);
 
                 statusLabel.setText("Server Status: Online");
+                
                 startServerButton.setEnabled(false);
                 stopServerButton.setEnabled(true);
+                
                 isServerRunning = true;
 
                 executorService.execute(new AcceptClientsThread());
@@ -125,8 +128,10 @@ public class test2 extends JFrame {
                 stopImageReceivingThreads();
 
                 statusLabel.setText("Server Status: Offline");
+                
                 startServerButton.setEnabled(true);
                 stopServerButton.setEnabled(false);
+                
                 isServerRunning = false;
 
             } catch (IOException ex) {
@@ -142,15 +147,18 @@ public class test2 extends JFrame {
                 try {
                     Socket clientSocket = serverSocket.accept();
                     Socket clientImageSocket = serverImageSocket.accept();
+                    
                     String clientInfo = "Client connected: " + clientSocket.getInetAddress() + ":" + clientSocket.getPort();
                     updateConnectedClients(clientInfo);
 
                     ClientCommunicationThread clientThread = new ClientCommunicationThread(clientSocket, clientImageSocket);
+                    
                     clientThreads.add(clientThread);
                     executorService.execute(clientThread);
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                     e.printStackTrace();
+                     SwingUtilities.invokeLater(() -> updateProcessInfo("Server closed"));
                 }
             }
         }
@@ -222,7 +230,10 @@ public class test2 extends JFrame {
                     System.out.println("Chup man hinh");
                 }
             } catch (IOException e) {
+                      
                 e.printStackTrace();
+                SwingUtilities.invokeLater(() -> updateProcessInfo("ClientTest closed"));
+                stopThread();
             }
         }
 
@@ -235,7 +246,7 @@ public class test2 extends JFrame {
                     updateProcessInfo(message);
                     
                     if (message.equals("Shutdown")) {
-                        shutDownTest1();
+                        sendToTest1("Shutdown");
                     }
                     
                     sendToAllClients(message);
@@ -246,25 +257,8 @@ public class test2 extends JFrame {
         }
     }
     
-    private void shutDownTest1() {
-        sendToTest1("Shutdown");
-    }
     
-    private void sendToTest1(String message) {
-        synchronized (clientOutputStreams) {
-            if (!clientOutputStreams.isEmpty()) {
-                try {
-                    DataOutputStream test1OutputStream = clientOutputStreams.get(0);
-                    test1OutputStream.writeUTF(message);
-                    test1OutputStream.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-
+    
     private void sendToAllClients(String message) {
         synchronized (clientOutputStreams) {
             for (DataOutputStream clientOut : clientOutputStreams) {
@@ -302,7 +296,7 @@ public class test2 extends JFrame {
     private synchronized void logProcessInfo(String info) {
         try {
             if (fileWriter == null) {
-                fileWriter = new FileWriter("info.txt", true);
+                fileWriter = new FileWriter("info.txt", false);
             }
             fileWriter.write(info + "\n");
             fileWriter.flush();
@@ -331,6 +325,21 @@ public class test2 extends JFrame {
                 }
             }
             clientImageOutputStreams.clear();
+        }
+    }
+    
+    //shutdown    
+    private void sendToTest1(String message) {
+        synchronized (clientOutputStreams) {
+            if (!clientOutputStreams.isEmpty()) {
+                try {
+                    DataOutputStream test1OutputStream = clientOutputStreams.get(0);
+                    test1OutputStream.writeUTF(message);
+                    test1OutputStream.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

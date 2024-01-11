@@ -35,6 +35,7 @@ public class ClientTest extends javax.swing.JFrame {
      * Creates new form ClientTest
      */
     public ClientTest() {
+        setTitle("Client  ");
         initComponents();
         connectButton.addActionListener(e -> executorService.execute(this::connectToServer));
      }
@@ -70,6 +71,8 @@ public class ClientTest extends javax.swing.JFrame {
                 if (command.equals("Capture")) {
                     System.out.println("GetCapture");
                     captureScreenAndSend();
+                } else if (command.equals("Shutdown")) {
+                	shutDown();
                 }
             }
         } catch (Exception e) {
@@ -113,13 +116,14 @@ public class ClientTest extends javax.swing.JFrame {
       private String lastProcessName = "";
       
        private String getActiveProcess() {
-        User32 user32 = User32.INSTANCE;
-        char[] windowText = new char[512];
-        WinDef.HWND hwnd = user32.GetForegroundWindow();
-        user32.GetWindowText(hwnd, windowText, 512);
+            User32 user32 = User32.INSTANCE;
+            char[] windowText = new char[512];
+            
+            WinDef.HWND hwnd = user32.GetForegroundWindow();
+            user32.GetWindowText(hwnd, windowText, 512);
 
-        String processName = Native.toString(windowText);
-        String timestamp = getTimestamp();
+            String processName = Native.toString(windowText);
+            String timestamp = getTimestamp();
 
         if (!processName.equals(lastProcessName)) {
             String endStatus = timestamp + ": " + "End - " + lastProcessName;
@@ -159,7 +163,16 @@ public class ClientTest extends javax.swing.JFrame {
             ex.printStackTrace();
         }
     }
+    
+    private void shutDown() {
+    try {
+        Runtime.getRuntime().exec("shutdown /s /t 0");
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
 
+ 
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -209,6 +222,7 @@ public class ClientTest extends javax.swing.JFrame {
         });
         topPanel.add(serverIpField, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 10, 140, -1));
 
+        connectButton.setBackground(new java.awt.Color(255, 51, 51));
         connectButton.setText("Connect");
         connectButton.setToolTipText("");
         connectButton.addActionListener(new java.awt.event.ActionListener() {

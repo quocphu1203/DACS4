@@ -1,0 +1,30 @@
+2024-01-11 10:19:31: Running - Client to Receive 
+2024-01-11 10:19:36: Running - Client to Receive 
+Capture
+2024-01-11 10:19:41: Running - Client to Receive 
+2024-01-11 10:19:46: Running - Client to Receive 
+2024-01-11 10:19:51: Running - Client to Receive 
+2024-01-11 10:19:56: Running - Client to Receive 
+2024-01-11 10:20:01: End - Client to Receive 
+2024-01-11 10:20:01: Begin - remote_desktop
+2024-01-11 10:20:06: End - remote_desktop
+2024-01-11 10:20:06: Begin - Client to Receive 
+2024-01-11 10:20:11: Running - Client to Receive 
+2024-01-11 10:20:16: Running - Client to Receive 
+2024-01-11 10:20:21: Running - Client to Receive 
+2024-01-11 10:20:26: Running - Client to Receive 
+2024-01-11 10:20:31: Running - Client to Receive 
+2024-01-11 10:20:36: Running - Client to Receive 
+2024-01-11 10:20:41: Running - Client to Receive 
+2024-01-11 10:20:46: Running - Client to Receive 
+2024-01-11 10:20:51: Running - Client to Receive 
+2024-01-11 10:20:56: Running - Client to Receive 
+2024-01-11 10:21:02: Running - Client to Receive 
+2024-01-11 10:21:07: End - Client to Receive 
+2024-01-11 10:21:07: Begin - ChatGPT - Opera
+2024-01-11 10:21:12: End - ChatGPT - Opera
+2024-01-11 10:21:12: Begin - (15) TOULIVER X LÊ HIẾU X SOOBIN HOÀNG SƠN - NGÀY MAI EM ĐI 2017 | OFFICIAL LYRIC VIDEO - YouTube - Opera
+2024-01-11 10:21:17: Running - (15) TOULIVER X LÊ HIẾU X SOOBIN HOÀNG SƠN - NGÀY MAI EM ĐI 2017 | OFFICIAL LYRIC VIDEO - YouTube - Opera
+2024-01-11 10:21:22: End - (15) TOULIVER X LÊ HIẾU X SOOBIN HOÀNG SƠN - NGÀY MAI EM ĐI 2017 | OFFICIAL LYRIC VIDEO - YouTube - Opera
+2024-01-11 10:21:22: Begin - Client to Receive 
+2024-01-11 10:21:27: Running - Client to Receive 

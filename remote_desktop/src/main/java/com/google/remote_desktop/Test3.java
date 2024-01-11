@@ -38,7 +38,7 @@ public class Test3 extends JFrame {
     
 
     public Test3() {
-        setTitle("Client to Receive Process Info");
+        setTitle("Client FGDFGDF ");
         setSize(714, 656);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -167,7 +167,7 @@ public class Test3 extends JFrame {
                 BufferedImage capturedImage = ImageIO.read(byteArrayInputStream);
 
 
-                File directory = new File("C:/Users/ACER/OneDrive - MSFT/Pictures/Phim");
+                File directory = new File("D:\\image");
                 if (!directory.exists()) {
                     directory.mkdirs();
                 }
@@ -216,6 +216,7 @@ public class Test3 extends JFrame {
         long remainingSeconds = seconds % 60;
         return String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds);
     }
+    
     private void displayAppUsageStatistics() {
         System.out.println("DEBUG: processUsageMap = " + processUsageMap);
         StringBuilder message = new StringBuilder("Thống Kê Thời Gian Chạy Tiến Trình:\n");

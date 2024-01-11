@@ -35,6 +35,8 @@ public class Test3 extends JFrame {
     private final Map<String, Long> processUsageMap = new HashMap<>();
     private long currentProcessStartTime;
     
+    private volatile boolean isServerClosed = false;
+    
     
 
     public Test3() {
@@ -95,7 +97,7 @@ public class Test3 extends JFrame {
 		                btnLog.setPreferredSize(new Dimension(71, 23));
 		                
 		                JButton btnNewButton = new JButton("Statistical");
-		                btnNewButton.addActionListener(e -> executorService.execute(this::displayAppUsageStatistics));
+
 		                btnNewButton.setBounds(10, 203, 180, 23);
 		                panel.add(btnNewButton);
 		                btnLog.addActionListener(this::toggleLogging);
@@ -196,48 +198,31 @@ public class Test3 extends JFrame {
         return DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss").format(LocalDateTime.now());
     }
 
-    private void startProcessInfoThread() {
+ private void startProcessInfoThread() {
         try {
             while (!socket.isClosed()) {
+                if (isServerClosed) {
+                    displayServerClosedMessage();
+                    break;
+                }
+
                 String message = dis.readUTF();
                 SwingUtilities.invokeLater(() -> updateProcessInfo(message));
             }
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    private String formatTime(long milliseconds) {
-        long seconds = milliseconds / 1000;
-        long hours = seconds / 3600;
-        long minutes = (seconds % 3600) / 60;
-        long remainingSeconds = seconds % 60;
-        return String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds);
-    }
-    private void displayAppUsageStatistics() {
-        System.out.println("DEBUG: processUsageMap = " + processUsageMap);
-        StringBuilder message = new StringBuilder("Thống Kê Thời Gian Chạy Tiến Trình:\n");
-        for (Map.Entry<String, Long> entry : processUsageMap.entrySet()) {
-            String processName = entry.getKey();
-            long processUsage = entry.getValue();
-
-            if (processUsage > 0) {
-                message.append("[").append(processName).append("] : ").append(formatTime(processUsage)).append("\n");
+            if (!isServerClosed) {
+                e.printStackTrace();
             }
         }
-        if (message.length() == 0) {
-            message.append("Không có dữ liệu thống kê.");
-        }
-
-        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() throws Exception {
-                JOptionPane.showMessageDialog(Test3.this, message.toString(), "Thống Kê Thời Gian Chạy", JOptionPane.INFORMATION_MESSAGE);
-                return null;
-            }
-        };
-
-        worker.execute();
     }
+ 
+   private void displayServerClosedMessage() {
+        SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(this, "Server has been closed."));
+    }
+    
+    
+   
+   
     private void updateProcessInfo(String info) {
         processInfoArea.append(info + "\n");
         if (isLoggingEnabled) {
@@ -276,7 +261,7 @@ public class Test3 extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
         	Test3 clientToReceive = new Test3();
-            clientToReceive.setVisible(true);
+                clientToReceive.setVisible(true);
         });
     }
 }

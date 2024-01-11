@@ -31,7 +31,7 @@ public class test2 extends JFrame {
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     public test2() {
-        setTitle("Server Monitor");
+        setTitle("Server XDFDFS");
         setSize(830, 528);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);

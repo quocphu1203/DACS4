@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -23,10 +24,12 @@ public class TrackTest extends javax.swing.JFrame {
     private DataOutputStream dos;
     private DataInputStream dis;
     private DataInputStream imageDis;
+    
     private volatile boolean isLoggingEnabled = false;
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private FileWriter fileWriter;
     private final Map<String, AppStatistics> appStatisticsMap = new HashMap<>();
+
     private final Map<String, Long> processUsageMap = new HashMap<>();
     private long currentProcessStartTime;
 
@@ -50,41 +53,37 @@ public class TrackTest extends javax.swing.JFrame {
         btnStatis.addActionListener(this::btnStatisActionPerformed);
     }
 
-    private void btnStatisActionPerformed(java.awt.event.ActionEvent evt) {                                          
+    private void btnStatisActionPerformed(java.awt.event.ActionEvent evt) {
         displayStatistics();
     }
-    
-public class AppStatistics {
 
-    private int usageCount;
-    private long totalUsageTime;
+    public class AppStatistics {
 
-    public AppStatistics() {
-        this.usageCount = 0;
-        this.totalUsageTime = 0;
+        private int usageCount;
+        private long totalUsageTime;
+
+        public AppStatistics() {
+            this.usageCount = 0;
+            this.totalUsageTime = 0;
+        }
+
+        public int getUsageCount() {
+            return usageCount;
+        }
+
+        public long getTotalUsageTime() {
+            return totalUsageTime;
+        }
+
+        public void incrementUsageCount() {
+            this.usageCount++;
+        }
+
+        public void addToTotalUsageTime(long time) {
+            this.totalUsageTime += time;
+        }
+
     }
-
-    public int getUsageCount() {
-        return usageCount;
-    }
-
-    public long getTotalUsageTime() {
-        return totalUsageTime;
-    }
-
-    public void incrementUsageCount() {
-        this.usageCount++;
-    }
-
-    public void addToTotalUsageTime(long time) {
-        this.totalUsageTime += time;
-    }
-    
-    public AppStatistics(String appName) {
-        this(); 
-    }
-}
-
 
     private void sendShutDownCommand() {
         try {
@@ -152,7 +151,9 @@ public class AppStatistics {
                 File imageFile = new File(directory, "img" + getTime() + ".png");
                 ImageIO.write(capturedImage, "png", imageFile);
                 System.out.println("Luu hình anh");
-                displayImage(capturedImage);
+                
+        
+                 displayImage(capturedImage);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -168,12 +169,7 @@ public class AppStatistics {
         resizedImage.getGraphics().drawImage(capturedImage, 0, 0, desiredWidth, desiredHeight, null);
         ImageIcon icon = new ImageIcon(resizedImage);
 
-        JOptionPane.showMessageDialog(
-                null,
-                icon,
-                "Image",
-                JOptionPane.PLAIN_MESSAGE
-        );
+        JOptionPane.showMessageDialog(null, icon, "Image", JOptionPane.PLAIN_MESSAGE);
     }
 
     private static String getTime() {
@@ -198,61 +194,56 @@ public class AppStatistics {
         return parts[parts.length - 1].trim();
     }
 
-     private void updateProcessInfo(String info) {
+
+    private void updateProcessInfo(String info) {
         String appName = extractAppName(info);
         processInfoArea.append(appName + "\n");
-
+        
         if (isLoggingEnabled) {
             logProcessInfo(info);
         }
-
         processInfoArea.append(info + "\n");
 
-        // Thống kê dựa trên appName
         appStatisticsMap.computeIfAbsent(appName, k -> new AppStatistics()).incrementUsageCount();
-
-//        appStatisticsMap.computeIfAbsent(appName, AppStatistics::new).incrementUsageCount();
         if (currentProcessStartTime > 0) {
             long processUsage = System.currentTimeMillis() - currentProcessStartTime;
             appStatisticsMap.get(appName).addToTotalUsageTime(processUsage);
         }
 
         String[] parts = info.split(" - ");
-        if (parts.length == 3) {
-            String status = parts[1].trim();
-            String processName = parts[2].trim();
+        if (parts.length >= 2) {
+            String status = parts[0].trim();
+            String processName = parts[1].trim();
 
-            if (status.equals("Begin")) {
+            if (status.contains("Begin")) {
                 currentProcessStartTime = System.currentTimeMillis();
-            } else if (status.equals("End") || status.equals("Running")) {
-                
+            } else if (status.contains("End")) {
+
                 long processUsage = System.currentTimeMillis() - currentProcessStartTime;
                 processUsageMap.merge(processName, processUsage, Long::sum);
                 
                 if (status.equals("End")) {
                     currentProcessStartTime = 0;
                 }
-                
-
             }
         }
     }
-     
-         private void displayStatistics() {
-        StringBuilder statistics = new StringBuilder();
-        statistics.append("Tổng số lượng ứng dụng đã sử dụng: ").append(appStatisticsMap.size()).append("\n\n");
-        statistics.append("Tên các ứng dụng đã sử dụng:\n");
+
+    private void displayStatistics() {
+        
+    StringBuilder statistics = new StringBuilder();
+        statistics.append("Total number of applications used: ").append(appStatisticsMap.size()).append("\n\n");
+        statistics.append("Names of used applications:\n");
 
         for (Map.Entry<String, AppStatistics> entry : appStatisticsMap.entrySet()) {
             String appName = entry.getKey();
             AppStatistics appStats = entry.getValue();
 
             statistics.append("- ").append(appName).append("\n");
-            statistics.append("  + Số lượng sử dụng: ").append(appStats.getUsageCount()).append("\n");
-            statistics.append("  + Tổng thời gian sử dụng: ").append(appStats.getTotalUsageTime()).append(" milliseconds\n\n");
+            statistics.append("  + number of uses ").append(appStats.getUsageCount()).append("\n");
+            statistics.append("  + total usage time: ").append((appStats.getTotalUsageTime() / 1000)).append("seconds\n\n");
         }
 
-        // Hiển thị kết quả trên usageScreen
         usageScreen.setText(statistics.toString());
     }
 
@@ -282,12 +273,7 @@ public class AppStatistics {
         File[] logFiles = logDirectory.listFiles((dir, name) -> name.startsWith("Log_") && name.endsWith(".txt"));
 
         if (logFiles != null && logFiles.length >= 7) {
-            int result = JOptionPane.showConfirmDialog(
-                    this,
-                    "Are you sure to do the 8th overwrite? When done, previous attempts will be lost..",
-                    "Confirm",
-                    JOptionPane.YES_NO_OPTION
-            );
+            int result = JOptionPane.showConfirmDialog(this, "Are you sure to do the 8th overwrite? When done, previous attempts will be lost..", "Confirm", JOptionPane.YES_NO_OPTION);
 
             if (result == JOptionPane.YES_OPTION) {
                 for (File logFile : logFiles) {

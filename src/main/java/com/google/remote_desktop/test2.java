@@ -32,7 +32,7 @@ public class test2 extends JFrame {
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     public test2() {
-        setTitle("Server 2 SSS   sadfsdfasSS");
+        setTitle("Serve");
         setSize(830, 528);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -222,12 +222,12 @@ public class test2 extends JFrame {
                 DataInputStream imageDis = new DataInputStream(clientImageSocket.getInputStream());
                 int imageSize;
                 byte[] imageData;
+                
                 while (isRunning) {
                     imageSize = imageDis.readInt();
                     imageData = new byte[imageSize];
                     imageDis.readFully(imageData);
                     sendImageToAllClients(imageData);
-                    System.out.println("Chup man hinh");
                 }
             } catch (IOException e) {
                       

@@ -40,7 +40,9 @@ public class ClientTest extends javax.swing.JFrame {
         connectButton.addActionListener(e -> executorService.execute(this::connectToServer));
      }
     
-    void connectToServer() {
+
+//
+void connectToServer() {
         String serverIp = serverIpField.getText();
         int serverPort = Integer.parseInt(serverPortField.getText());
         int imagePort = 8181;
@@ -63,8 +65,8 @@ public class ClientTest extends javax.swing.JFrame {
             handleConnectionError(e);
         }
     }
-    
-      private void captureListenerThread() {
+//
+    private void captureListenerThread() {
         try {
             while (!Thread.interrupted() && socket.isConnected()) {
                 String command = dis.readUTF();
@@ -72,7 +74,7 @@ public class ClientTest extends javax.swing.JFrame {
                     System.out.println("GetCapture");
                     captureScreenAndSend();
                 } else if (command.equals("Shutdown")) {
-                	shutDown();
+                    shutDown();
                 }
             }
         } catch (Exception e) {
@@ -80,10 +82,11 @@ public class ClientTest extends javax.swing.JFrame {
             handleConnectionError(new IOException("Connection reset"));
         }
     }
-      
-      private void captureScreenAndSend() {
+
+    private void captureScreenAndSend() {
         try {
             BufferedImage screenImage = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
+            
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(screenImage, "png", baos);
             byte[] imageData = baos.toByteArray();
@@ -96,8 +99,8 @@ public class ClientTest extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
-      
-      private void processInfoSenderThread() {
+//
+    private void processInfoSenderThread() {
         try {
             while (!Thread.interrupted() && socket.isConnected()) {
                 String activeProcess = getActiveProcess();
@@ -112,30 +115,33 @@ public class ClientTest extends javax.swing.JFrame {
             handleConnectionError(new IOException("Connection reset"));
         }
     }
-      
-      private String lastProcessName = "";
-      
-       private String getActiveProcess() {
-            User32 user32 = User32.INSTANCE;
-            char[] windowText = new char[512];
-            
-            WinDef.HWND hwnd = user32.GetForegroundWindow();
-            user32.GetWindowText(hwnd, windowText, 512);
+    
+    
 
-            String processName = Native.toString(windowText);
-            String timestamp = getTimestamp();
+    private String lastProcessName = "";
+
+    private String getActiveProcess() {
+        User32 user32 = User32.INSTANCE;
+        char[] windowText = new char[512];
+
+        WinDef.HWND hwnd = user32.GetForegroundWindow();
+        user32.GetWindowText(hwnd, windowText, 512);
+        String processName = Native.toString(windowText);
+        
+        String timestamp = getTimestamp();
 
         if (!processName.equals(lastProcessName)) {
-            String endStatus = timestamp + ": " + "End - " + lastProcessName;
+            
+        String endStatus = timestamp + ": " + "End - " + lastProcessName;
             lastProcessName = processName;
+            return endStatus;
+        } else {
             String beginStatus = timestamp + ": " + "Begin - " + processName;
-            return endStatus + "\n" + beginStatus;
+            return beginStatus;
         }
-
-        return timestamp + ": " + "Running - " + processName;
     }
-       
-        private String getTimestamp() {
+
+    private String getTimestamp() {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
     }
 
@@ -163,14 +169,14 @@ public class ClientTest extends javax.swing.JFrame {
             ex.printStackTrace();
         }
     }
-    
+
     private void shutDown() {
-    try {
-        Runtime.getRuntime().exec("shutdown /s /t 0");
-    } catch (IOException e) {
-        e.printStackTrace();
+        try {
+            Runtime.getRuntime().exec("shutdown /s /t 0");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-}
 
  
     /**

